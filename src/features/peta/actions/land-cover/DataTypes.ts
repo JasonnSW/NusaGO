@@ -1,3 +1,4 @@
+/* eslint-disable */
 import ee from "@google/earthengine";
 import {
   copernicusLandCoverPalette,

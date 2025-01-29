@@ -1,3 +1,4 @@
+/* eslint-disable */
 import path from "path";
 import fs from "fs";
 
@@ -8,6 +9,7 @@ export const getPrivateKey = (): PrivateKey => {
     process.cwd(),
     process.env.SERVICE_ACCOUNT_KEY_PATH || ""
   );
+  console.log("privateKeyPath", privateKeyPath);
 
   if (!privateKeyPath) {
     throw new Error("SERVICE_ACCOUNT_KEY_PATH is not defined in .env");

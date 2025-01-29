@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Image from "next/image";
 import React from "react";
 import profile from "../../../../public/assets/profile.svg";

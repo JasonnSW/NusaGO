@@ -1,25 +1,20 @@
 "use client"
 import Image from "next/image";
 import React from "react";
-import content from "../../../../public/assets/content.svg";
 import { Button } from "@/components/ui/button";
-import { VscArrowRight } from "react-icons/vsc";
-import leaf4 from "../../../../public/assets/leaf4.svg";
+import { VscArrowRight } from "react-icons/vsc";  
 import ProductCard from "@/features/home/components/ProductCard";
 import { useRouter } from "next/navigation";
 
 export default function Overview() {
   const router = useRouter();
-  const handleClick = () => {
-    router.push("/peta");
-  };
 
   return (
     <div className="w-full min-h-screen bg-neutral-light">
       <div className="p-24">
         <div className="flex flex-col md:flex-row gap-x-12">
           <div className="w-1/2">
-            <Image width={840} height={743} src={content} alt="content" />
+            <Image width={840} height={743} src="/assets/content.svg" alt="content" />
           </div>
           <div className="w-1/2">
             <div className="flex flex-col gap-y-6 items-start justify-start px-2">

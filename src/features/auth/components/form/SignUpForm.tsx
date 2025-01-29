@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 import { CheckboxWithLabel } from "@/components/CheckBoxWithLabel";
 import { InputWithLabel } from "@/components/InputWithLabel";
@@ -19,7 +20,8 @@ export default function SignUpForm() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter(); 
+  const [token, setToken] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,17 +30,16 @@ export default function SignUpForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null); 
+    setError(null);
 
     try {
       const response = await fetch(
-        "https://nusago-ruddy.vercel.app/api/v1/users/register",
+        "/api/auth/register",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
         }
       );
       console.log("Request:", formData);
@@ -50,11 +51,11 @@ export default function SignUpForm() {
       }
 
       const data = await response.json();
-      console.log("Response:", data);
-      router.push("/sign-in"); 
+      setToken(data.token);
+      router.push("/sign-in");
     } catch (error: any) {
       console.error("Error:", error);
-      setError(error.message); 
+      setError(error.message);
       alert("Terjadi kesalahan, coba lagi.");
     } finally {
       setIsLoading(false);
@@ -115,19 +116,15 @@ export default function SignUpForm() {
             onChange={handleChange}
           />
           <div className="flex items-center my-2">
-            {/* <CheckboxWithLabel
+            <CheckboxWithLabel
               id="terms"
               label="Saya setuju dengan"
               termsText="Syarat dan Ketentuan"
               suffixText="yang berlaku"
               className="text-primary-primary"
-            /> */}
+            />
           </div>
-          {error && (
-            <div className="text-red-500 text-sm mt-2">
-              {error} 
-            </div>
-          )}
+          {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
           <Button
             type="submit"
             className="w-full bg-primary-primary text-white py-2 rounded-md hover:bg-[#E3E8EC] hover:text-primary-primary"

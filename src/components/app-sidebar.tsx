@@ -67,7 +67,6 @@ const SECTIONS: {
 export function AppSidebar() {
   const { photoUrl, address } = usePlaceContext();
   const [activeSection, setActiveSection] = useState<SectionId | null>(null);
-  const [showStatistics, setShowStatistics] = useState(false);
 
   return (
     <Sidebar className="space-y-24">
@@ -90,7 +89,6 @@ export function AppSidebar() {
             } else {
               setActiveSection(null);
             }
-            setShowStatistics(!!value);
           }}
         >
           {SECTIONS.map((section) => (

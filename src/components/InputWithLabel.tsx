@@ -9,7 +9,6 @@ type InputWithLabelProps = {
   className?: string;
   name?: string;
   value?: string;
-  fdprocessedid?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -21,7 +20,6 @@ export function InputWithLabel({
   className,
   value,
   onChange,
-  fdprocessedid,
   ...props
 }: InputWithLabelProps) {
   return (

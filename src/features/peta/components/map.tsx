@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Logo from "../../../../public/assets/LogoGreen.svg";
-import { Info, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { usePlaceContext } from "@/features/peta/context/PlaceContext";
 import { useMapContext } from "../context/MapContext";
 import { BackButton, LocationCard } from "./InfoCard";
@@ -31,7 +31,6 @@ const Maps = () => {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
     libraries,
   });
-
   const [zoom, setZoom] = useState(6);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [tempAddress, setTempAddress] = useState("");
