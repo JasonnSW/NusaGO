@@ -4,15 +4,14 @@ import {
   GoogleMap,
   useJsApiLoader,
   StandaloneSearchBox,
-  GroundOverlay,
 } from "@react-google-maps/api";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import Logo from "../../../../public/assets/LogoGreen.svg";
-import { Search } from "lucide-react";
+import { Info, Search } from "lucide-react";
 import { usePlaceContext } from "@/features/peta/context/PlaceContext";
-import { fetchNDVIData } from "../actions/Dataset";
-import ee from "@google/earthengine";
+import { useMapContext } from "../context/MapContext";
+import { BackButton, LocationCard } from "./InfoCard";
 
 const containerStyle = {
   width: "100vw",
@@ -24,20 +23,9 @@ const center = {
   lng: 113.9213,
 };
 
-type Library = "places";
+const libraries: "places"[] = ["places"];
 
-const libraries: Library[] = ["places"];
-
-type MapProps = {
-  setLatitude: (lat: number) => void;
-  setLongitude: (lng: number) => void;
-  latitude: number;
-  longitude: number;
-  address: string;
-  setAddress: (address: string) => void;
-};
-
-function Maps({ setLatitude, setLongitude, latitude, longitude }: MapProps) {
+const Maps = () => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
@@ -48,83 +36,93 @@ function Maps({ setLatitude, setLongitude, latitude, longitude }: MapProps) {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [tempAddress, setTempAddress] = useState("");
   const inputRef = useRef<google.maps.places.SearchBox | null>(null);
-  const [token, setToken] = useState("");
-  const [mapId, setMapId] = useState("");
-  const { setPhotoUrl, setAddress } = usePlaceContext();
+  const [rectangle, setRectangle] = useState<google.maps.Rectangle | null>(
+    null
+  );
+  const [latitud, setLatitud] = useState(-0.7893);
+  const [longitud, setLongitud] = useState(113.9213);
+  const { data } = useMapContext();
 
-  const fetchData = async () => {
-    try {
-      const data = await fetchNDVIData();
-      setToken(data.token);
-      setMapId(data.mapId);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+  const { setPhotoUrl, setAddress, address } = usePlaceContext();
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (map && mapId) {
+    if (data?.mapId && map) {
       const overlayMapType = new google.maps.ImageMapType({
-        getTileUrl: function (coord, zoom) {
-          return ee.data.getTileUrl({ mapid: mapId}, 4, 5, 6);
-        },
+        getTileUrl: (coord, zoom) =>
+          `https://earthengine.googleapis.com/v1alpha/${data.mapId}/tiles/${zoom}/${coord.x}/${coord.y}`,
+        name: "Earth Engine Overlay",
         tileSize: new google.maps.Size(256, 256),
-        opacity: 1.0,
+        opacity: 1,
       });
-
       map.overlayMapTypes.clear();
       map.overlayMapTypes.insertAt(0, overlayMapType);
     }
-  }, [map, mapId]);
+  }, [data?.mapId, map]);
 
-  const handlePlaceChanged = () => {
-    if (inputRef.current) {
-      const places = inputRef.current.getPlaces();
-      if (places && places.length > 0) {
-        const place = places[0];
-        const location = place.geometry?.location;
-        if (location) {
-          const lat = location.lat();
-          const lng = location.lng();
-          const formattedAddress = place.formatted_address || "";
+  const handlePlaceChanged = async () => {
+    if (!inputRef.current) return;
 
-          setLatitude(lat);
-          setLongitude(lng);
-          setTempAddress(formattedAddress);
-          setAddress(formattedAddress);
+    const places = inputRef.current.getPlaces();
+    if (!places || !places.length) return;
 
-          const photo = place.photos ? place.photos[0] : null;
-          if (photo) {
-            const photoUrl = photo.getUrl({ maxWidth: 400, maxHeight: 200 });
-            setPhotoUrl(photoUrl);
-          }
+    const place = places[0];
+    const location = place.geometry?.location;
+    const viewport = place.geometry?.viewport;
 
-          setZoom(12);
-          map?.panTo({ lat, lng });
-        }
+    if (location && viewport) {
+      const lat = location.lat();
+      const lng = location.lng();
+      const formattedAddress = place.formatted_address || "";
+
+      setTempAddress(formattedAddress);
+      setAddress(formattedAddress);
+
+      const photo = place.photos?.[0];
+      if (photo) {
+        setPhotoUrl(photo.getUrl({ maxWidth: 400, maxHeight: 200 }));
+      }
+
+      setZoom(12);
+      setLatitud(lat);
+      setLongitud(lng);
+      map?.panTo({ lat, lng });
+
+      const bounds = {
+        north: viewport.getNorthEast().lat(),
+        south: viewport.getSouthWest().lat(),
+        east: viewport.getNorthEast().lng(),
+        west: viewport.getSouthWest().lng(),
+      };
+      if (rectangle) {
+        rectangle.setBounds(bounds);
+      } else {
+        const newRectangle = new google.maps.Rectangle({
+          bounds,
+          editable: false,
+          draggable: false,
+          strokeColor: "#FF0000",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#FF0000",
+          fillOpacity: 0.2,
+          map,
+        });
+        setRectangle(newRectangle);
       }
     }
   };
 
-  const handleMapClick = (event: google.maps.MapMouseEvent) => {
-    const lat = event.latLng?.lat() || 0;
-    const lng = event.latLng?.lng() || 0;
-    setLatitude(lat);
-    setLongitude(lng);
+  const handleMapClick = () => {
     setAddress(tempAddress);
+    setZoom(12);
   };
+
   return isLoaded ? (
     <GoogleMap
       mapContainerStyle={containerStyle}
       center={center}
       zoom={zoom}
-      onLoad={(map) => {
-        setMap(map);
-      }}
+      onLoad={setMap}
       onUnmount={() => setMap(null)}
       onClick={handleMapClick}
       options={{
@@ -134,26 +132,47 @@ function Maps({ setLatitude, setLongitude, latitude, longitude }: MapProps) {
         fullscreenControl: false,
       }}
     >
-      <div className="absolute top-0 left-48 z-10">
-        <StandaloneSearchBox
-          onLoad={(ref) => (inputRef.current = ref)}
-          onPlacesChanged={handlePlaceChanged}
-        >
-          <Input
-            type="text"
-            placeholder="Telusuri Peta Hijau"
-            className="box-border border border-transparent max-w-screen-md w-[300px] h-11 m-2 px-12 rounded-3xl shadow-md text-xl outline-none placeholder-ellipsis bg-white mt-2"
-            value={tempAddress}
-            onChange={(e) => setTempAddress(e.target.value)}
-            leftIcon={<Image src={Logo} alt="Logo" width={24} height={24} />}
-            rightIcon={<Search size={24} width={24} />}
-          />
-        </StandaloneSearchBox>
+      <SearchBox
+        tempAddress={tempAddress}
+        setTempAddress={setTempAddress}
+        handlePlaceChanged={handlePlaceChanged}
+        inputRef={inputRef}
+      />
+      <div className="absolute bottom-6 right-20 text-sm text-start items-center justify-center flex space-x-8">
+        <BackButton />
+        <LocationCard title={address} lat={latitud} lng={longitud} />
       </div>
     </GoogleMap>
-  ) : (
-    <></>
-  );
-}
+  ) : null;
+};
+
+const SearchBox = ({
+  tempAddress,
+  setTempAddress,
+  handlePlaceChanged,
+  inputRef,
+}: {
+  tempAddress: string;
+  setTempAddress: React.Dispatch<React.SetStateAction<string>>;
+  handlePlaceChanged: () => Promise<void>;
+  inputRef: React.MutableRefObject<google.maps.places.SearchBox | null>;
+}) => (
+  <div className="absolute top-0 left-48 z-10">
+    <StandaloneSearchBox
+      onLoad={(ref) => (inputRef.current = ref)}
+      onPlacesChanged={handlePlaceChanged}
+    >
+      <Input
+        type="text"
+        placeholder="Telusuri Peta Hijau"
+        className="box-border border border-transparent max-w-screen-md w-[300px] h-11 m-2 px-12 rounded-3xl shadow-md text-xl outline-none placeholder-ellipsis bg-white mt-2"
+        value={tempAddress}
+        onChange={(e) => setTempAddress(e.target.value)}
+        leftIcon={<Image src={Logo} alt="Logo" width={24} height={24} />}
+        rightIcon={<Search size={24} />}
+      />
+    </StandaloneSearchBox>
+  </div>
+);
 
 export default React.memo(Maps);

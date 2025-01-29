@@ -34,7 +34,7 @@ export default function Overview() {
                 </span>
               </p>
               <Button
-                onClick={handleClick}
+                onClick={() => router.push("/peta")}
                 rightIcon={<VscArrowRight />}
                 iconSize="text-3xl"
                 className="rounded-[45px] p-6 text-primary-dark bg-white border-[3px] border-primary-dark hover:text-white hover:bg-primary-dark text-2xl"

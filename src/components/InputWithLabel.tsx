@@ -7,24 +7,33 @@ type InputWithLabelProps = {
   type?: string;
   id?: string;
   className?: string;
+  name?: string;
+  value?: string;
+  fdprocessedid?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export function InputWithLabel({
   label,
   placeholder,
   type,
-  id,
+  name,
   className,
+  value,
+  onChange,
+  fdprocessedid,
   ...props
 }: InputWithLabelProps) {
   return (
     <div className="grid w-full max-w-md items-center gap-y-2">
       <Label htmlFor={label}>{label}</Label>
       <Input
+        name={name}
         className={className}
         type={type}
-        id={id}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         {...props}
       />
     </div>

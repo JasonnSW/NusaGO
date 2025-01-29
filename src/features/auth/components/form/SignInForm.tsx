@@ -1,3 +1,5 @@
+"use client";
+
 import { CheckboxWithLabel } from "@/components/CheckBoxWithLabel";
 import { InputWithLabel } from "@/components/InputWithLabel";
 import { Button } from "@/components/ui/button";
@@ -5,7 +7,13 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Logo from "../../../../../public/assets/LogoGreen.svg";
+import { useRouter } from "next/navigation";
 export default function SignInForm() {
+  const router = useRouter();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push("/");
+  };
   return (
     <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-2">
       <div className="flex items-center justify-center flex-col mb-4">
@@ -17,7 +25,10 @@ export default function SignInForm() {
           Please enter your details
         </p>
       </div>
-      <form className="w-full max-w-sm md:max-w-lg space-y-4 px-2 md:px-8">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-sm md:max-w-lg space-y-4 px-2 md:px-8"
+      >
         <InputWithLabel
           className="h-10"
           label="Email"
