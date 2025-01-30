@@ -1,16 +1,14 @@
 import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
-  const userData = await req.json();
-  console.log("Received userData:", userData);
-  const response = await fetch(
-    "https://nusago-ruddy.vercel.app/api/v1/users/register",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const body = await req.json();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const response = await fetch(`${apiUrl}/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
 
   if (!response.ok) {
     const errorText = await response.text();

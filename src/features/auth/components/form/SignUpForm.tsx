@@ -20,12 +20,12 @@ export default function SignUpForm() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,21 +37,17 @@ export default function SignUpForm() {
         "/api/auth/register",
         {
           method: "POST",
-          headers: {
+          headers: {  
             "Content-Type": "application/json",
           },
+          body: JSON.stringify(formData),
         }
       );
-      console.log("Request:", formData);
-      console.log("Request:", response);
       if (!response.ok) {
         const errorText = await response.text();
         console.log("Error:", errorText);
         throw new Error(errorText);
       }
-
-      const data = await response.json();
-      setToken(data.token);
       router.push("/sign-in");
     } catch (error: any) {
       console.error("Error:", error);

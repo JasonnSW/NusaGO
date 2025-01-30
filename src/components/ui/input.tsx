@@ -10,7 +10,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, leftIcon, name, value, onChange, rightIcon, ...props }, ref) => {
     return (
       <div className="relative flex items-center">
-        {leftIcon && <div className="absolute left-6">{leftIcon}</div>}
+        {leftIcon && <div className="absolute left-6 top-4">{leftIcon}</div>}
         <input
           name={name}
           value={value}
@@ -25,7 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
-        {rightIcon && <div className="absolute right-12">{rightIcon}</div>}
+        {rightIcon && <div className="absolute right-8 top-5">{rightIcon}</div>}
       </div>
     );
   }

@@ -5,14 +5,26 @@ import { InputWithLabel } from "@/components/InputWithLabel";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import Logo from "../../../../../public/assets/LogoGreen.svg";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useRouter } from "next/navigation";
 export default function SignInForm() {
+  const { login, errorMessage } = useAuth();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const router = useRouter();
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/");
+    login(formData);
+    router.refresh();
   };
   return (
     <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-2">
@@ -25,19 +37,27 @@ export default function SignInForm() {
           Please enter your details
         </p>
       </div>
+      {errorMessage && (
+        <div className="text-red-500 text-center mb-4">{errorMessage}</div>
+      )}
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm md:max-w-lg space-y-4 px-2 md:px-8"
       >
         <InputWithLabel
-          className="h-10"
           label="Email"
           placeholder="Richard@surya.com"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
           type="email"
         />
         <InputWithLabel
           label="Password"
           placeholder="********"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
           type="password"
         />
         <CheckboxWithLabel className="h-2" id="remember" label="Remember me" />

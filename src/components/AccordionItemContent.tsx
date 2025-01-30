@@ -4,7 +4,7 @@ import { IoMdAlert } from "react-icons/io";
 import {
   fetchDataEmission,
   fetchDataLandCover,
-} from "@/features/peta/actions/Dataset";
+} from "@/features/peta/actions/data-processing";
 import { useMapContext } from "@/features/peta/context/MapContext";
 
 interface AccordionItemContentProps {

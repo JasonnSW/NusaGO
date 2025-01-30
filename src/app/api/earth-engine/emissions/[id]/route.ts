@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import ee from "@google/earthengine";
-import { getPrivateKey } from "@/features/peta/services/earthEngineServices";
+import { getPrivateKey } from "@/features/peta/actions/earthEngineServices";
 
 const DATASETS: Record<string, string> = {
   "Drained Organic Soils": "FAO/GHG/1/DROSE_A",

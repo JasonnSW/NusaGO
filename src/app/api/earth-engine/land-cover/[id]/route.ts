@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import ee from "@google/earthengine";
-import { getPrivateKey } from "@/features/peta/services/earthEngineServices";
+import { getPrivateKey } from "@/features/peta/actions/earthEngineServices";
 import {
   getCopernicusLandCover,
   getDynamicWorld,
