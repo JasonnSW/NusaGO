@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
   const cookieStore = cookies();
-  const token = req.cookies.get("authToken");
+  const token = req.cookies.get("authToken") || req.cookies.get("_vercel_jwt");
 
   if (!token) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
@@ -14,10 +14,14 @@ export function middleware(req: NextRequest) {
       expires: new Date(0),
       path: "/",
     });
+    cookieStore.set("_vercel_jwt", "", {
+      path: "/",
+      expires: new Date(0),
+    });
   }
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/peta",
+  matcher: ["/peta", "/logout"],
 };
