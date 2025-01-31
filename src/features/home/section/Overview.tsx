@@ -14,7 +14,7 @@ export default function Overview() {
       <div className="p-24">
         <div className="flex flex-col md:flex-row gap-x-12">
           <div className="w-1/2">
-            <Image width={840} height={743} src="/assets/content.svg" alt="content" />
+            <Image width={840} height={743} src="/assets/Content.svg" alt="content" />
           </div>
           <div className="w-1/2">
             <div className="flex flex-col gap-y-6 items-start justify-start px-2">
