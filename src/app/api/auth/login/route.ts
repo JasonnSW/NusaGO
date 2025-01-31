@@ -27,21 +27,14 @@ export async function POST(req: NextRequest) {
 
   const cookieStore = cookies();
 
-  const existingAuthToken = cookieStore.get("authToken");
-
-  if (existingAuthToken) {
-    console.log("Existing auth token:", existingAuthToken);
-  }
-
   const responseWithCookie = NextResponse.json({
     message: "Login successful",
     token: token,
-  });
-
-  console.log("Response with cookie:", responseWithCookie);
+  }); 
 
   cookieStore.set("authToken", token, {
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
     maxAge: 60 * 60 * 24,
     path: "/",
   });

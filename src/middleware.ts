@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
   const cookieStore = cookies();
-  const token = req.cookies.get("authToken") || req.cookies.get("_vercel_jwt");
+  const token = req.cookies.get("authToken");
 
   if (!token) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
@@ -13,10 +13,7 @@ export function middleware(req: NextRequest) {
     cookieStore.set("authToken", "", {
       expires: new Date(0),
       path: "/",
-    });
-    cookieStore.set("_vercel_jwt", "", {
-      path: "/",
-      expires: new Date(0),
+      secure: process.env.NODE_ENV === "production",  
     });
   }
   return NextResponse.next();
