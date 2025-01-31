@@ -13,7 +13,6 @@ export function middleware(req: NextRequest) {
     cookieStore.set("authToken", "", {
       expires: new Date(0),
       path: "/",
-      secure: process.env.NODE_ENV === "production",  
     });
   }
   return NextResponse.next();
