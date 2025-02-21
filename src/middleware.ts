@@ -3,14 +3,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const cookieStore = cookies();
-  const token = req.cookies.get("authToken");
-
+  const token = cookies().get("token")?.value;
   if (!token) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
+  const res = NextResponse.next();
   if (req.url.includes("/logout")) {
-    cookieStore.set("authToken", "", {
+    res.cookies.set("token", "", {
       expires: new Date(0),
       path: "/",
     });
@@ -19,5 +18,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: "/peta",
+  matcher: ["/peta", "/profile"],
 };

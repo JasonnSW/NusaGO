@@ -1,31 +1,37 @@
 "use client";
 
 import { CheckboxWithLabel } from "@/components/CheckBoxWithLabel";
-import { InputWithLabel } from "@/components/InputWithLabel";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import Logo from "../../../../../public/assets/LogoGreen.svg";
-import { useAuth } from "@/features/auth/hooks/use-auth";
-import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { LoginData, LoginSchema } from "../../schemas/auth";
+import { useLoginAuth } from "../../hooks/use-auth";
+
 export default function SignInForm() {
-  const { login, errorMessage } = useAuth();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+  const form = useForm<LoginData>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: { email: "", password: "" },
   });
-  const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
+    login(values);
   };
+  const { mutate: login, isPending } = useLoginAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    login(formData);
-    router.refresh();
-  };
   return (
     <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-2">
       <div className="flex items-center justify-center flex-col mb-4">
@@ -37,43 +43,65 @@ export default function SignInForm() {
           Please enter your details
         </p>
       </div>
-      {errorMessage && (
-        <div className="text-red-500 text-center mb-4">{errorMessage}</div>
-      )}
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm md:max-w-lg space-y-4 px-2 md:px-8"
-      >
-        <InputWithLabel
-          label="Email"
-          placeholder="Richard@surya.com"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          type="email"
-        />
-        <InputWithLabel
-          label="Password"
-          placeholder="********"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          type="password"
-        />
-        <CheckboxWithLabel className="h-2" id="remember" label="Remember me" />
-        <Button
-          type="submit"
-          className="w-full bg-primary-primary text-white py-2 rounded-md hover:bg-[#1E8449]"
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full max-w-md space-y-4"
         >
-          Masuk Akun
-        </Button>
-      </form>
-      <p className="mt-4">
-        Tidak memiliki akun?{" "}
-        <Link href="/sign-up" className="text-primary-primary">
-          Sign Up
-        </Link>
-      </p>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Richard@workmail.com"
+                    {...field}
+                    disabled={isPending}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Buat Password anda"
+                    {...field}
+                    disabled={isPending}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <CheckboxWithLabel id="remember" label="Remember me" />
+
+          <Button
+            type="submit"
+            className="w-full bg-primary-primary hover:bg-primary-dark text-white py-2 rounded-md"
+            disabled={isPending}
+          >
+            {isPending ? "Signing in..." : "Masuk Akun"}
+          </Button>
+        </form>
+        <p className="mt-4">
+          Tidak memiliki akun?{" "}
+          <Link href="/sign-up" className="text-primary-primary">
+            Sign Up
+          </Link>
+        </p>
+      </Form>
     </div>
   );
 }

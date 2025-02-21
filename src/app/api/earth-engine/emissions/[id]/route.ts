@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import ee from "@google/earthengine";
-import { getPrivateKey } from "@/features/peta/actions/earthEngineServices";
+import { getPrivateKey } from "@/features/peta/services/earth-engine-services";
+import {
+  getDrainedOrganicSoils,
+  getFireCCI,
+  getFiresOrganicSoils,
+} from "@/features/peta/actions/emissions/data-types";
 
 const DATASETS: Record<string, string> = {
   "Drained Organic Soils": "FAO/GHG/1/DROSE_A",
+  "Fires Organic Soils": "FAO/GHG/1/DROSE_A",
+  "Biomass Fires CCI": "ESA/CCI/FireCCI/5_1",
 };
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -25,21 +32,28 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       ee.initialize(null, null, resolve, reject);
     });
 
-    const datasetId = DATASETS[dataType];
-    const imageCollection = ee.ImageCollection(datasetId);
-    const image = imageCollection.mosaic();
-    const cropland = image.select("croplandc");
+    const decodeDataType = decodeURIComponent(dataType);
+    console.log(decodeDataType);
+    const datasetId = DATASETS[decodeDataType];
+    if (!datasetId) {
+      throw new Error("Invalid data type specified.");
+    }
 
-    const croplandMap = cropland.getMap({
-      bands: ["croplandc"],
-      min: 0,
-      max: 1,
-      palette: ["yellow", "red"],
-    });
+    let mapData;
+
+    if (datasetId === "FAO/GHG/1/DROSE_A") {
+      mapData = await getDrainedOrganicSoils(polygonBounds, datasetId);
+    } else if (datasetId === "FAO/GHG/1/DROSE_A") {
+      mapData = await getFiresOrganicSoils(polygonBounds, datasetId);
+    } else if (datasetId === "ESA/CCI/FireCCI/5_1") {
+      mapData = await getFireCCI(polygonBounds, datasetId);
+    } else {
+      throw new Error("Invalid data type specified.");
+    }
 
     return NextResponse.json({
       success: true,
-      mapId: croplandMap.mapid,
+      mapId: mapData?.mapid,
     });
   } catch (error: unknown) {
     console.error("Error in Earth Engine API:", error);

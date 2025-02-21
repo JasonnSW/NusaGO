@@ -4,8 +4,9 @@ import { IoMdAlert } from "react-icons/io";
 import {
   fetchDataEmission,
   fetchDataLandCover,
+  fetchDataVegetation,
 } from "@/features/peta/actions/data-processing";
-import { useMapContext } from "@/features/peta/context/MapContext";
+import { useMapContext } from "@/features/peta/context/map-context";
 
 interface AccordionItemContentProps {
   items: string[];
@@ -39,6 +40,10 @@ export function AccordionItemContent({
         }
         if (title === "Land Cover") {
           const data = await fetchDataLandCover(polygonBounds, label);
+          setData(data);
+        }
+        if (title === "Vegetations") {
+          const data = await fetchDataVegetation(polygonBounds, label);
           setData(data);
         }
       } catch (error) {

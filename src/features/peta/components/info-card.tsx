@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { MdArrowBackIosNew } from "react-icons/md";
-import { usePlaceContext } from "../context/PlaceContext";
+import { usePlaceContext } from "../context/place-context";
 
 export const LocationCard = () => {
   const { address, lat, lng } = usePlaceContext();

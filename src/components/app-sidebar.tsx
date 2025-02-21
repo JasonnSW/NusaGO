@@ -5,7 +5,7 @@ import {
   SidebarContent,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import { usePlaceContext } from "@/features/peta/context/PlaceContext";
+import { usePlaceContext } from "@/features/peta/context/place-context";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import {

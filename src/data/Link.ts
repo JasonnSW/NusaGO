@@ -1,7 +1,7 @@
 export const Links = [
   {
     id: 1,
-    href: "#",
+    href: "/",
     title: "Beranda",
   },
   {
@@ -11,17 +11,17 @@ export const Links = [
   },
   {
     id: 3,
-    href: "#",
+    href: "/portofolio",
     title: "Portofolio",
   },
   {
     id: 4,
-    href: "#",
+    href: "/blog",
     title: "Blog",
   },
   {
     id: 5,
-    href: "#",
+    href: "/langganan",
     title: "Langganan",
   },
 ];

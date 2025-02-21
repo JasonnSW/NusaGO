@@ -2,7 +2,7 @@ import React, { useRef} from "react";
 import { StandaloneSearchBox } from "@react-google-maps/api";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { usePlaceContext } from "@/features/peta/context/PlaceContext";
+import { usePlaceContext } from "@/features/peta/context/place-context";
 import Image from "next/image";
 import Logo from "../../../../public/assets/LogoGreen.svg";
 

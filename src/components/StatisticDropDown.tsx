@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
-import { STATISTICS, SectionId } from "./StatisticData";
+import { STATISTICS, SectionId } from "../data/StatisticData";
 
 export function StatisticsAccordion({
   sectionId,

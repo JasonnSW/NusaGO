@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { MapProvider } from "@/features/peta/context/MapContext";
-import { PlaceProvider } from "@/features/peta/context/PlaceContext";
+import { MapProvider } from "@/features/peta/context/map-context";
+import { PlaceProvider } from "@/features/peta/context/place-context";
 
 export default function Layout({
   children,

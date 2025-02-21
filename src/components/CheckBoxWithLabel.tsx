@@ -3,6 +3,8 @@ import { Label } from "@/components/ui/label";
 type CheckboxWithLabelProps = {
   id: string;
   label: string;
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
   termsText?: string;
   suffixText?: string;
   className?: string;

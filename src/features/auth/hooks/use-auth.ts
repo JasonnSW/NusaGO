@@ -1,27 +1,52 @@
-import { useState } from "react";
-import { loginRequest } from "@/features/auth/api/login-request";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { login, register } from "../server/actions/auth";
 
-export const useAuth = () => {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+export const useLoginAuth = () => {
+  const { toast } = useToast();
   const router = useRouter();
 
-  const login = async (formData: { email: string; password: string }) => {
-    try {
-      const { token, error } = await loginRequest(formData);
-      console.log(token);
-
-      if (error) {
-        setErrorMessage(error);
-        return;
-      }
-
+  return useMutation({
+    mutationFn: login,
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Login berhasil!",
+        variant: "default",
+      });
       router.push("/");
-    } catch (error) {
-      console.error("Error during login:", error);
-      setErrorMessage("Terjadi kesalahan, coba lagi.");
-    }
-  };
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Login gagal",
+        variant: "destructive",
+      });
+    },
+  });
+};
 
-  return { login, errorMessage };
+export const useRegisterAuth = () => {
+  const { toast } = useToast();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: register,
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Register berhasil!",
+        variant: "default",
+      });
+      router.push("/sign-in");
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Register gagal",
+        variant: "destructive",
+      });
+    },
+  });
 };

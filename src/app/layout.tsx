@@ -17,7 +17,7 @@ const geistArial = localFont({
   src: "../../public/fonts/arial/ARIAL.woff",
   variable: "--font-arial",
   weight: "100 900",
-})
+});
 
 export const metadata: Metadata = {
   title: "NusaGO",

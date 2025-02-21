@@ -32,14 +32,6 @@ export const getEsaWorldCover = async (
 };
 
 export const getDynamicWorld = async (polygonBounds: any, dataType: string) => {
-  const START = ee.Date("2021-04-02");
-  const END = START.advance(1, "day");
-
-  const colFilter = ee.Filter.and(
-    ee.Filter.bounds(ee.Geometry.Point(20.6729, 52.4305)),
-    ee.Filter.date(START, END)
-  );
-
   const dwCol = ee.ImageCollection(dataType);
   const s2Col = ee.ImageCollection("COPERNICUS/S2_HARMONIZED");
 
@@ -88,6 +80,29 @@ export const getCopernicusLandCover = async (
     min: 0,
     max: 200,
     palette: copernicusLandCoverPalette,
+  });
+  return { mapid: visualization.mapid };
+};
+
+export const getEsriLandCover = async (
+  polygonBounds: any,
+  dataType: string
+) => {
+  const dataset = ee.ImageCollection(dataType);
+  const visualization = dataset.getMap({
+    min: 1,
+    max: 9,
+    palette: [
+      "#1A5BAB",
+      "#358221",
+      "#87D19E",
+      "#FFDB5C",
+      "#ED022A",
+      "#EDE9E4",
+      "#F2FAFF",
+      "#C8C8C8",
+      "#C6AD8D",
+    ],
   });
   return { mapid: visualization.mapid };
 };

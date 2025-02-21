@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/features/peta/services/earthEngineServices.js"
-  ],
+, "src/app/profile"  ],
   "exclude": ["node_modules"]
 }

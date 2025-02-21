@@ -39,6 +39,7 @@ export interface ButtonProps
   asChild?: boolean;
   rightIcon?: React.ReactNode;
   iconSize?: string;
+  onClose?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(

@@ -1,10 +1,10 @@
 "use client";
 import React, { useCallback, useState } from "react";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
-import { useMapContext } from "@/features/peta/context/MapContext";
+import { useMapContext } from "@/features/peta/context/map-context";
 import { SearchBox } from "@/features/peta/components/map-search-box";
-import { LocationCard, BackButton } from "@/features/peta/components/InfoCard";
-import { usePlaceContext } from "../context/PlaceContext";
+import { LocationCard, BackButton } from "@/features/peta/components/info-card";
+import { usePlaceContext } from "../context/place-context";
 import { useMapOverlay } from "@/hooks/use-map-overlay";
 
 const containerStyle = { width: "100vw", height: "100vh" };
